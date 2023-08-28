@@ -142,7 +142,7 @@ static void RS485_Read(void)
 		/* Kiem tra Frame nhan */
 		for(i=1; i<=8; i++)
 		{
-			if( (Buffer_Action[i]>=0) && (Buffer_Action[i]<=9) )
+			if( (Buffer_Action[i]>0) && (Buffer_Action[i]<=9) )
 			{
 				continue;
 			}

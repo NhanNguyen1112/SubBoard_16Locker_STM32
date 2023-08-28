@@ -15,7 +15,8 @@ void Delay_TIM2_ms(const unsigned int MiliSeconds);
 void Delay_TIM2_us(const unsigned int MicroSeconds);
 void TIM2_IRQHandler(void);
 void Function_Test(void);
-void Main_TIM2_BASE(void);
+
+void Main_TIM2_BASE(void) __attribute__ ((noreturn));
 
 /*======================================================================================================*/
 

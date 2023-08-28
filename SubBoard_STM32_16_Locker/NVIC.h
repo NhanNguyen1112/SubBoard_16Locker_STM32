@@ -68,7 +68,7 @@ void NVIC_EnableInterrupt(IRQn_Type IRQ_number);
 void NVIC_DisableInterrupt(IRQn_Type IRQ_number);
 void NVIC_ClearPendingFlag(IRQn_Type IRQ_number);
 void NVIC_SetPriority(IRQn_Type IRQ_number, unsigned char priority);
-void NVIC_SystemReset(void);
+void NVIC_SystemReset(void) __attribute__ ((noreturn));
 
 #endif
 

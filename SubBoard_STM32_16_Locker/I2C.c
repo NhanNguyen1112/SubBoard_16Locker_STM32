@@ -34,15 +34,15 @@ void I2C1_Init(I2C_Mode_Type mode)
   */
   if (mode == I2C_STANDARD) 
 	{
-		I2C1->CCR &= ~(1u<<15);														// 1: Fm mode I2C (Fast mode - 400kHz)
-		I2C1->CCR = (PCLK1_FREQUENCY / (100000 * 2));			// CCR[11:0]: Clock control register in Fm/Sm mode (Master mode) 100kHz
-		I2C1->TRISE = ((PCLK1_FREQUENCY / 1000000) + 1);	// TRISE[5:0]: Maximum rise time in Fm/Sm mode (Master mode)
+		I2C1->CCR &= ~(1u<<15);														/* 1: Fm mode I2C (Fast mode - 400kHz) */
+		I2C1->CCR = (PCLK1_FREQUENCY / (100000 * 2));			/* CCR[11:0]: Clock control register in Fm/Sm mode (Master mode) 100kHz */
+		I2C1->TRISE = ((PCLK1_FREQUENCY / 1000000) + 1);	/* TRISE[5:0]: Maximum rise time in Fm/Sm mode (Master mode) */
 	} 
 	else
 	{
-		I2C1->CCR |= (1u<<15);										// 1: Fm mode I2C (Fast mode - 400kHz)
-		I2C1->CCR = (PCLK1_FREQUENCY / (400000 * 3));					// CCR[11:0]: Clock control register in Fm/Sm mode (Master mode) 400kHz
-		I2C1->TRISE = (((PCLK1_FREQUENCY / 1000000 * 300) / 1000) + 1);	// TRISE[5:0]: Maximum rise time in Fm/Sm mode (Master mode)
+		I2C1->CCR |= (1u<<15);										/* 1: Fm mode I2C (Fast mode - 400kHz) */
+		I2C1->CCR = (PCLK1_FREQUENCY / (400000 * 3));					/* CCR[11:0]: Clock control register in Fm/Sm mode (Master mode) 400kHz */
+		I2C1->TRISE = (((PCLK1_FREQUENCY / 1000000 * 300) / 1000) + 1);	/* TRISE[5:0]: Maximum rise time in Fm/Sm mode (Master mode) */
 	}
 
   CR1 |= (1u<<0); /* Enable I2C */
@@ -94,16 +94,15 @@ static unsigned char I2C1_SendAdress(unsigned int Address, I2C_Direction_Type di
 {
 	unsigned char State=I2C_OK;
 	unsigned int TimerTick=0;
-	unsigned int temp=0;
 	
 	if (direction == I2C_TRANSMITTER) 
 	{
-		Address &= ~(1u << 0);						// Reset the address bit0 for write
+		Address &= ~(1u << 0);						/* Reset the address bit0 for write */
 		I2C1->DR = Address;
 	} 
 	else /* Receiver */
 	{
-		Address |= (1u << 0);						// Set the address bit0 for read
+		Address |= (1u << 0);						/* Set the address bit0 for read */
 		I2C1->DR = Address;
 	}
 
@@ -117,8 +116,8 @@ static unsigned char I2C1_SendAdress(unsigned int Address, I2C_Direction_Type di
 		}
 	}
 
-	temp = I2C1->SR1;
-	temp = I2C1->SR2;
+	(void)I2C1->SR1;
+	(void)I2C1->SR2;
 
 	return State;
 }
@@ -163,11 +162,11 @@ static unsigned char I2C1_Read(unsigned char *DataRead, I2C_Acknowledge_Type ack
 
 	if (acknowledge == I2C_ACK) 
 	{
-		I2C1->CR1 |= (1u<<10);					// 1: Acknowledge returned after a byte is received (matched address or data)
+		I2C1->CR1 |= (1u<<10);					/* 1: Acknowledge returned after a byte is received (matched address or data) */
 	} 
 	else /* NACK */
 	{
-		I2C1->CR1 &= ~(1u<<10);					// 0: No acknowledge returned
+		I2C1->CR1 &= ~(1u<<10);					/* 0: No acknowledge returned */
 	}
 
 	TimerTick=Tick_1us;
@@ -464,9 +463,11 @@ unsigned char I2C1_ReadMEM(const unsigned char AddressI2C, const unsigned char A
 /*===================================================================
 											I2C MAIN TEST
 ===================================================================*/
+
+/*
 void Main_I2C1_Test(void)
 {
-  InitClockHSE(); /* 72Mhz */
+  InitClockHSE();
   Init_TIM2_Delay();
   I2C1_Init(I2C_STANDARD);
 
@@ -482,6 +483,8 @@ void Main_I2C1_Test(void)
 		// Delay_TIM2_ms(100);
   }
 }
+*/
+
 /*=================================================================*/
 
 

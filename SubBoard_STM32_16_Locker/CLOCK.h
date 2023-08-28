@@ -18,7 +18,7 @@
 #define PLLMUL_X9
 /*#define PLLMUL_X6_5*/
 
-//#define APB1_Not_Div
+/*#define APB1_Not_Div*/
 #define APB1_Div_2
 /*#define APB1_Div_4
 #define APB1_Div_8
@@ -40,12 +40,13 @@
 #define AHB_Div_256
 #define AHB_Div_512*/
 
-//#define PA8_MCO
-//#define MCO_SYSCLK
-//#define MCO_HSI
-//#define MCO_HSE
-//#define MCO_PLL_DIV2
-
+/*
+#define PA8_MCO
+#define MCO_SYSCLK
+#define MCO_HSI
+#define MCO_HSE
+#define MCO_PLL_DIV2
+*/
 
 /*===========================================================*/
 

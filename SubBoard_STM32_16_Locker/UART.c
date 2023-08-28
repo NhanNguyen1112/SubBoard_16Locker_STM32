@@ -22,7 +22,17 @@ static void Setup_GPIO_PA9TX_PA10RX(void)
 
 void USART1_SendData(unsigned char *Data)
 {
-  while ( !(USART1->SR & (1u<<7))); 
+  unsigned int TimerTick=0;
+
+  TimerTick = Tick_1us;
+  while ( !(USART1->SR & (1u<<7))) /* TXE: Data is transferred to the shift register*/
+  {
+    if( (unsigned int)(Tick_1us - TimerTick) >= 5000 ) /* 5ms */
+		{
+      NVIC_SystemReset();
+		}
+  }
+
   USART1->DR = (*Data);
 }
 
@@ -75,8 +85,10 @@ void USART1_IRQHandler(void)
   }
 
   /* Test sau khi read thi gui lai Data vua read len TX */
-  //ReadData = (unsigned char)(USART1->DR & (0xFFu<<0));
-  //USART1_SendData(&ReadData,sizeof(ReadData));
+	/*
+  ReadData = (unsigned char)(USART1->DR & (0xFFu<<0));
+  USART1_SendData(&ReadData,sizeof(ReadData)); 
+	*/
 
   NVIC_ClearPendingFlag(USART1_IRQn); /* interrupt clear pending USART1 */
 }
