@@ -1,0 +1,54 @@
+/**
+*   @file    MAIN_APP.c
+*   @brief   Chương trình điều khiển 16 ô tủ locker, dùng STM32F103C8T6, 2 PCF8575: 1 IC dùng
+			cho điều khiển relay, 1 IC dùng cho đọc trạng thái cửa, 4 switch chọn địa chỉ cho board, 
+			giao tiếp với ESP32 qua RS485.
+					
+*   @details  - PCF8575: 3 chân chọn địa chỉ của IC yêu cầu Hardware thiết kế đầu jump, không Fix cứng.
+			Địa chỉ của 2 IC được config trong file MAIN_APP.c . Bình thường IC điều khiển
+			relay có địa chỉ 0x20 (A0, A1, A2 nối GND), IC đọc trạng thái khóa cửa có địa chỉ 0x27 (A0, A1, A2
+			nối VCC). Các chân IO của PCF8575 đọc trạng thái tủ yêu cầu Hareware kép PullUp.
+
+							- IC RS485 nối vào UART 1, TX - PA9, RX - PA10. Phương pháp truyền thông tin cậy, Master gọi
+							Slave trả lời.
+				*UART config Baudrate: 115200.
+				*UART Frame: 1 bit Start, 8 bit Data, 1 bit Stop.
+				*Data frame: Data được đặt trong cặp dấu [] ; Tổng: 10 byte
+
+											Cú pháp:   	[ Data ]
+
+						Master (8 byte data): byte 1,2 - Địa chỉ Board Master; byte 3,4 - Địa chỉ Board phụ 
+																	byte 5,6 số tủ cần mở/đọc ; byte 7,8 Write/Read (1: Write, 0: Read)
+										EX: [00010601] - Address Master: 00 ; Address board phụ: 01 
+																		- Tủ số: 06 ; - Hành động: 01-Write (mở tủ) 
+
+						Slave (8 byte data): byte 1,2 - Địa chỉ Board Master; byte 2,3 - Địa chỉ Board phụ; 
+																byte 3,4 - số tủ; byte 5,6 - trạng thái tủ.
+										EX: [00010601] - Address board Master: 00 ; Address board phụ: 01 ; 
+																Tủ số: 06 ; Trạng Thái: 01-Mở thành công/00-Mở thất bại
+					
+					***NOTE: Số địa chỉ & số tủ phải từ 0-99
+
+				*Xử lý lỗi: 
+					+ Master gửi 3 lần không thấy Slave phản hồi thì báo lên Server Slave đó lỗi, không phản
+				hồi.
+					+ Master gửi lệnh mở cửa mà Slave phản hồi về cửa chưa mở thì gửi lại 3 lần. Nếu cửa vẫn không
+				mở thì gửi lên Server số cửa và địa chỉ board phụ có cửa không mở được.
+					+ Slave phản hồi trạng thái về cho Master GỬI LIÊN TỤC 5 lần.
+								
+							- 4 Switch chọn địa chỉ nối chân PA3, PA4, PA6, PA7, lần lượt từ 1-4. Yêu cầu hardware
+			kéo PullUp.
+
+							- Sử dụng I2C1 (SCL: PB6, SDA: PB7). Tốc độ 100KHz.
+				I2C Frame:
+					Start
+						7 bit Add, 1 bit R/W, 1 bit ACK from Slave
+						8 bit Data (0-7), 1 bit ACK from Slave
+						8 bit Data (10-17), 1 bit ACK from Slave
+					Stop
+
+* Board phụ gửi mã lỗi về Board Master: Tổng 10 byte
+
+			[ERRORICW] : Lỗi kết nối IC PCF8575 Write
+
+			[ERRORICR] : Lỗi kết nối IC PCF8575 Read
