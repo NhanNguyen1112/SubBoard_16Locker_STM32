@@ -69,7 +69,7 @@ void USART1_Setup(void)
 
   USART1->CR1 |= (1u<<13); /* Enable USART1 */
 
-  NVIC_SetPriority(USART1_IRQn,1);    /* Set priority */
+  NVIC_SetPriority(USART1_IRQn,0);    /* Set priority */
   NVIC_ClearPendingFlag(USART1_IRQn); /* interrupt clear pending USART1 */
   NVIC_EnableInterrupt(USART1_IRQn);  /* enable interrupt USART1 */
 

@@ -40,6 +40,7 @@ void Init_TIM2_Delay(void)
   TIM2->DIER |= (1<<0);  /* UIE: Update interrupt enable */
   TIM2->SR &= ~(1u<<0);  /* UIF: Clear UIF update interrupt flag */
 
+  NVIC_SetPriority(TIM2_IRQn,1);    /* Set priority */
   NVIC_ClearPendingFlag(TIM2_IRQn); /* Clear Pending */
   NVIC_EnableInterrupt(TIM2_IRQn); 	/* Enable interupt */
 
